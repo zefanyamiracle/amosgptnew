@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amos Engine</title>
+    <style>
+        body {
+            font-family: 'Calibri', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            background: linear-gradient(135deg, #000428, #004e92);
+            color: #fff;
+        }
+
+        .top-bar {
+            background: #333;
+            color: #fff;
+            padding: 10px 20px;
+            text-align: center;
+            font-size: 1.5em;
+            font-weight: bold;
+            box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
+            border-bottom: 2px solid #444;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logout-button {
+            background: #ff4b5c;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .logout-button:hover {
+            background: #ff1e3c;
+        }
+
+        .container {
+            display: flex;
+            flex-grow: 1;
+        }
+
+        .sidebar {
+            width: 300px;
+            background: linear-gradient(145deg, #333, #444);
+            border-right: 1px solid #555;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5);
+            border-radius: 0 10px 10px 0;
+        }
+
+        .sidebar-header {
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .new-chat {
+            background: linear-gradient(145deg, #10a37f, #12b486);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .new-chat:hover {
+            background: linear-gradient(145deg, #0e7c6a, #0f947d);
+            transform: scale(1.05);
+        }
+
+        .history {
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
+        .history-item {
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            background: linear-gradient(145deg, #444, #555);
+            margin-bottom: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .history-item:hover {
+            background: linear-gradient(145deg, #555, #666);
+            transform: scale(1.05);
+        }
+
+        .main-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            background: #222;
+            border-radius: 10px 0 0 10px;
+            box-shadow: -2px 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .chat-area {
+            flex-grow: 1;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+
+        .message {
+            max-width: 80%;
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 15px;
+            line-height: 1.4;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+            animation: slide-in 0.3s ease-out;
+        }
+
+        @keyframes slide-in {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .user-message {
+            background: linear-gradient(145deg, #4CAF50, #5ecf65);
+            color: white;
+            align-self: flex-end;
+            margin-left: auto;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .ai-message {
+            background: linear-gradient(145deg, #444, #555);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .input-area {
+            display: flex;
+            border: 1px solid #444;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .input-area textarea {
+            flex-grow: 1;
+            border: none;
+            padding: 15px;
+            font-size: 16px;
+            resize: none;
+            background-color: #333;
+            color: #fff;
+            border-radius: 15px 0 0 15px;
+        }
+
+        .input-area button {
+            background: linear-gradient(145deg, #10a37f, #12b486);
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            border-radius: 0 15px 15px 0;
+        }
+
+        .input-area button:hover {
+            background: linear-gradient(145deg, #0e7c6a, #0f947d);
+            transform: scale(1.05);
+        }
+
+        #loader {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        #loader img {
+            width: 50px;
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        Amos GPT
+        <button class="logout-button" onclick="logout()">Logout</button>
+    </div>
+    <div class="container">
+        <div class="sidebar">
+            <div class="sidebar-header">Amos GPT</div>
+            <button class="new-chat" onclick="resetChat()">New Chat</button>
+            <div class="history">
+            </div>
+        </div>
+        <div class="main-content">
+            <div class="chat-area" id="chat-history">
+                <div class="message ai-message">Hello! How can I assist you today?</div>
+            </div>
+            <div class="input-area">
+                <textarea id="user-input" placeholder="Type your message here..."></textarea>
+                <button id="send-button">Send</button>
+            </div>
+        </div>
+    </div>
+    <div id="loader">
+        <img src="loader.gif" alt="Loading...">
+    </div>
+
+    <script>
+        const chatHistory = document.getElementById('chat-history');
+        const userInput = document.getElementById('user-input');
+        const sendButton = document.getElementById('send-button');
+        const loader = document.getElementById('loader');
+
+        function resetChat() {
+            chatHistory.innerHTML = '<div class="message ai-message">Hello! How can I assist you today?</div>';
+        }
+
+        async function sendMessage() {
+            const userMessage = userInput.value;
+            userInput.value = ''; // Clear input field
+            console.log(userMessage);
+            try {
+                const response = await fetch('/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ userInput: userMessage }),
+                });
+
+                const data = await response.json();
+                console.log(data);
+                const botMessage = data.response;
+                console.log(botMessage);
+
+                // Add chat message to the chat history
+                chatHistory.innerHTML += `<div class="message user-message">${userMessage}</div>`;
+                chatHistory.innerHTML += `<div class="message ai-message">${botMessage}</div>`;
+
+                // Scroll to the bottom of the chat history
+                chatHistory.scrollTop = chatHistory.scrollHeight;
+            } catch (error) {
+                console.error('Error:', error);
+                // Handle errors gracefully, e.g., display an error message to the user
+            }
+        }
+
+        sendButton.addEventListener('click', (event) => {
+            event.preventDefault(); // Prevent default button behavior
+            loader.style.display = 'block'; // Show the loader
+            sendMessage().finally(() => {
+                loader.style.display = 'none'; // Hide the loader after the message is sent
+            });
+        });
+
+        userInput.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                event.preventDefault(); // Prevent default Enter key behavior
+                sendButton.click(); // Trigger the send button click
+            }
+        });
+
+        function logout() {
+            window.location.href = 'login.html';
+        }
+    </script>
+</body>
+</html>
