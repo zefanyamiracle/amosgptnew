@@ -4,7 +4,7 @@ const dotenv = require('dotenv').config();
 const path = require('path');
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 5500;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true })); // to support URL-encoded bodies
 
